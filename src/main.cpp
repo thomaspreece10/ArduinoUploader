@@ -46,14 +46,17 @@ int main(int argc, char* argv[])
     // get app dir
 	appdir = strdup(argv[0]);
 	p = strrchr(appdir, '/');
-	if (!p) p = strrchr(appdir, '\\');
+	if (!p)
+	{
+		p = strrchr(appdir, '\\');
+	}
 	if (p)
         *(p + 1) = 0;
     else
         *appdir = 0;
-	SetCurrentDirectory(appdir);
 
 #ifdef WIN32
+	SetCurrentDirectory(appdir);
 	// set toolchain path
 	char* pathenv = new char[4096];
 	GetEnvironmentVariable("PATH", pathenv, 4096 - strlen(appdir) - 16);
