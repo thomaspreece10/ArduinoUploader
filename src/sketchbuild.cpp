@@ -29,7 +29,11 @@ bool CArduinoBuilder::ParseSketch(const char* sketch)
 				if (l >= sizeof(buf)) l = sizeof(buf) - 1;
 				memcpy(buf, p + 1, l);
 				buf[l] = 0;
+#ifdef WIN32
 				if (!_stricmp(buf, "Arduino")) {
+#else
+				if (!strcasecmp(buf, "Arduino")) {
+#endif
 					// referenced Arduino.h, no need to mod
 					needMod = false;
 					continue;
@@ -141,12 +145,21 @@ const char* CArduinoBuilder::GetCompiler(const char* filename)
 	char *tool = 0;
 	char *p = strrchr((char*)filename, '.');
 	if (p++) {
+#ifdef WIN32
 		if (!_stricmp(p, "cpp"))
 			tool = "avr-g++";
 		else if (!_stricmp(p, "pde") || !_stricmp(p, "ino"))
 			tool = "avr-g++ -x c++";
 		else if (!_stricmp(p, "c"))
 			tool = "avr-gcc";
+#else
+		if (!strcasecmp(p, "cpp"))
+			tool = "avr-g++";
+		else if (!strcasecmp(p, "pde") || !strcasecmp(p, "ino"))
+			tool = "avr-g++ -x c++";
+		else if (!strcasecmp(p, "c"))
+			tool = "avr-gcc";
+#endif
 	}
 	return tool;
 }
@@ -210,7 +223,11 @@ int CArduinoBuilder::BuildSketch()
 	// scan stock libraries
 	if (ReadDir("arduino/libraries", fn) == 0) do {
 		if (fn[0] == '.') continue;
+#ifdef WIN32
 		_snprintf(buf, sizeof(buf), "arduino/libraries/%s/%s.h", fn, fn);
+#else
+		snprintf(buf, sizeof(buf), "arduino/libraries/%s/%s.h", fn, fn);
+#endif
 		if (!IsFileExist(buf)) continue;
 		syslibs.push_back(fn);
 	} while(ReadDir(0, fn) == 0);
@@ -223,11 +240,19 @@ int CArduinoBuilder::BuildSketch()
 	do {
 		char *p = strrchr((char*)fn, '.');
 		if (!p) continue;
+#ifdef WIN32
 		bool isMain = (_stricmp(srcfn.c_str(), fn) == 0);
+#else
+		bool isMain = (strcasecmp(srcfn.c_str(), fn) == 0);
+#endif
 
 		sprintf(buf, "%s/%s", buildDir, fn);
 
+#ifdef WIN32
 		if (!isMain && (!_stricmp(p, ".c") || !_stricmp(p, ".cpp"))) {
+#else
+		if (!isMain && (!strcasecmp(p, ".c") || !strcasecmp(p, ".cpp"))) {
+#endif
 			char *content = LoadTextFile(buf);
 			if (content) {
 				ParseSketch(content);
@@ -236,7 +261,11 @@ int CArduinoBuilder::BuildSketch()
 			}
 			continue;
 		}
+#ifdef WIN32
 		if (!isMain && _stricmp(p, ".pde") && _stricmp(p, ".ino")) 
+#else
+		if (!isMain && strcasecmp(p, ".pde") && strcasecmp(p, ".ino"))
+#endif
 			continue;
 
 		// load sketch content
@@ -275,7 +304,11 @@ int CArduinoBuilder::BuildSketch()
 		do {
 			char *p = strrchr((char*)fn, '.');
 			if (!p) continue;
+#ifdef WIN32
 			if (!_stricmp(p, ".c") || !_stricmp(p, ".cpp")) {
+#else
+			if (!strcasecmp(p, ".c") || !strcasecmp(p, ".cpp")) {
+#endif
 				cores.push_back(fn);
 			}
 		} while (ReadDir(0, fn) == 0);
