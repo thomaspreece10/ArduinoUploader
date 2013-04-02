@@ -111,7 +111,7 @@ int CArduinoBuilder::UploadToArduino(const char* eepfile, const char* serial, in
 		if (!strcmp(serial, "usbasp")) {
 			p += sprintf(p, " -cusbasp -Pusb");
 		} else if (!strcmp(board->mcu, "atmega32u4")) {
-			p += sprintf(p, " -cavr109 -P%s -b%d", uploadPort, board->baudrate);
+			p += sprintf(p, " -cavr109 -P%s -b%d", uploadPort.c_str(), board->baudrate);
 		} else if (!strcmp(board->mcu, "atmega2560")) {
 			p += sprintf(p, " -cwiring -P%s -b%d", serial, board->baudrate);
 		} else {
