@@ -120,7 +120,14 @@ int main(int argc, char* argv[])
 		if (!p) p = strrchr(s, '\\');
 		if (p) {
 			*p = 0;
-			if (!IsDir(s)) _mkdir(s);
+			if (!IsDir(s))
+			{
+#ifdef WIN32
+				_mkdir(s);
+#else
+				mkdir(s, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);//0755
+#endif
+			}
 		}
 		free(s);
 	}
