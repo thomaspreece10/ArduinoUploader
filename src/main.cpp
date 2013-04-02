@@ -3,7 +3,11 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#ifdef WIN32
 #include <direct.h>
+#else
+#include <fcntl.h>
+#endif
 extern "C" {
 #include "syspil.h"
 #include "processpil.h"
