@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cstring>
 
 #define SUCCESS 0
 #define ERROR_GENERIC -1
