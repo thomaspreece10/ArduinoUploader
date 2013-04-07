@@ -198,11 +198,14 @@ std::string CArduinoBuilder::GetFileNameNoExt(const char* path)
 {
     string name;
     const char *p = strrchr((char*)path, '/');
-    if (!p) p = strrchr((char*)path, '\\');
-    if (!p++) p = path;
+    if (!p)
+        p = strrchr((char*)path, '\\');
+    if (!p++)
+        p = path;
     name = p;
     int i = name.find_last_of('.');
-    if (i > 0) name.erase(i);
+    if (i > 0)
+        name.erase(i);
     return name;
 }
 
@@ -210,7 +213,8 @@ static char* LoadTextFile(const char* filename)
 {
     char *content;
     FILE* fp = fopen(filename, "rb");
-    if (!fp) return 0;
+    if (!fp)
+        return 0;
     fseek(fp, 0, SEEK_END);
     int len = ftell(fp);
     fseek(fp, 0, SEEK_SET);
@@ -252,7 +256,8 @@ int CArduinoBuilder::BuildSketch()
 #else
         snprintf(buf, sizeof(buf), "arduino/libraries/%s/%s.h", fn, fn);
 #endif
-        if (!IsFileExist(buf)) continue;
+        if (!IsFileExist(buf))
+            continue;
         syslibs.push_back(fn);
     } while(ReadDir(0, fn) == 0);
 
@@ -421,7 +426,8 @@ int CArduinoBuilder::BuildSketch()
 
                 cmd.str("");
                 cmd << tool	<< " -c" << extraopts << GetCompileOpts();
-                if (buildDir) cmd << " -I\"" << buildDir << '\"';
+                if (buildDir)
+                    cmd << " -I\"" << buildDir << '\"';
                 cmd << " \"" << sources[i].c_str() << "\" -o \"" << buf << "\"";
 
                 //#ifdef _DEBUG
@@ -636,7 +642,8 @@ int CArduinoBuilder::BuildSketch()
                 cmd << " \"" << objs[i] << "\"";
             }
 
-            if (corefile) cmd << " \"" << corefile << "\"";
+            if (corefile)
+                cmd << " \"" << corefile << "\"";
             sprintf(buf, "%s/%s.elf", workDir, GetFileNameNoExt(hexfile).c_str());
             cmd << " -o \"" << buf << "\"";
 

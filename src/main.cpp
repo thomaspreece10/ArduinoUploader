@@ -8,7 +8,8 @@
 #else
 #include <fcntl.h>
 #endif
-extern "C" {
+extern "C"
+{
 #include "syspil.h"
 #include "processpil.h"
 }
