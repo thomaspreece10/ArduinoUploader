@@ -32,11 +32,13 @@ int main(int argc, char* argv[])
 	CArduinoBuilder builder;
 
 	cout << "Arduino Compiler & Uploader Version " << BUILDER_VERSION << endl << "(C)2013 Developed by Stanley Huang <stanleyhuangyc@gmail.com>" << endl << "Distributed under GPL license" << endl << endl;
-    if (argc < 2) {
+    if (argc < 2)
+    {
 		int i;
-		cout << "Command line syntax:" << endl << argv[0] << " [sketch/hex file] [board type] [serial port/usbasp] [MCU frequency in MHz]" << endl << endl
-			<< "Board types:" << endl;
-		for (i = 0; boards[i].name; i++) {
+        cout << "Command line syntax:" << endl << argv[0] << " [sketch/hex file] [board type] [serial port/usbasp] [MCU frequency in MHz]"
+             << endl << endl << "Board types:" << endl;
+        for (i = 0; boards[i].name; i++)
+        {
 			cout << (i + 1) << " - " << boards[i].name << endl;
 		}
 		cout << endl;
@@ -64,42 +66,56 @@ int main(int argc, char* argv[])
 	strcat(pathenv, appdir);
 	strcat(pathenv, "bin");
 	SetEnvironmentVariable("PATH", pathenv);
-	delete pathenv;
+    delete [] pathenv;
 #endif
 
     filepath = argv[1];
 	p = filepath + strlen(filepath) - 1;
-	if (*p == '.') *(p--) = 0;
-	if (*p == '/' || *p == '\\') *p = 0;
-	if (IsDir(filepath)) {
+    if (*p == '.')
+        *(p--) = 0;
+    if (*p == '/' || *p == '\\')
+        *p = 0;
+    if (IsDir(filepath))
+    {
 		// building core and library mode
 		builder.hexfile = 0;
-	} else {
+    }
+    else
+    {
 		builder.hexfile = new char[strlen(filepath) + 5];
 		sprintf(builder.hexfile, "%s.hex", filepath);
 	}
 
-	if (argc > 2) {
+    if (argc > 2)
+    {
 		int boardCount;
 		for (boardCount = 0; boards[boardCount].name; boardCount++);
-		if (isdigit(argv[2][0])) {
+        if (isdigit(argv[2][0]))
+        {
 			boardIndex = atoi(argv[2]);
 			boardIndex--;
-		} else {
-			for (boardIndex = 0; boardIndex < boardCount; boardIndex++) {
-				if (strstr(boards[boardIndex].id, argv[2])) break;
+        }
+        else
+        {
+            for (boardIndex = 0; boardIndex < boardCount; boardIndex++)
+            {
+                if (strstr(boards[boardIndex].id, argv[2]))
+                    break;
 			}
 		}
-		if (boardIndex < 0 || boardIndex >= boardCount) {
+        if (boardIndex < 0 || boardIndex >= boardCount)
+        {
 			cout << "No valid board selected." << endl;
 			return -2;
 		}
 	}
 	board = boards + boardIndex;
 
-	if (argc > 3) {
+    if (argc > 3)
+    {
 	    serial = argv[3];
-		if (!strcmp(serial, "-")) serial = 0;
+        if (!strcmp(serial, "-"))
+            serial = 0;
 	}
 
 	if (argc > 4)
@@ -110,15 +126,19 @@ int main(int argc, char* argv[])
 	if (argc > 5)
 	    ispBaudrate = atoi(argv[5]);
 
-	if (argc > 6) libfile = argv[6];
-	if (argc > 7) corefile = argv[7];
+    if (argc > 6)
+        libfile = argv[6];
+    if (argc > 7)
+        corefile = argv[7];
 
-	if (libfile) {
+    if (libfile)
+    {
 		// create library file dir
 		char *s = _strdup(libfile);
 		char *p = strrchr(s, '/');
 		if (!p) p = strrchr(s, '\\');
-		if (p) {
+        if (p)
+        {
 			*p = 0;
 			if (!IsDir(s))
 			{
@@ -133,45 +153,62 @@ int main(int argc, char* argv[])
 	}
 
 	// initialize builder
-	if (boardIndex >= 0) {
+    if (boardIndex >= 0)
+    {
 		builder.board = boards + boardIndex;
 	}
 
-	if (!strstr(filepath, ".hex") && !strstr(filepath, ".HEX")) {
+    if (!strstr(filepath, ".hex") && !strstr(filepath, ".HEX"))
+    {
 		char* buildDir = new char [strlen(filepath) + 1];
 
-		if (builder.hexfile) {
+        if (builder.hexfile)
+        {
 			strcpy(buildDir, filepath);
 			p = strrchr(buildDir, '/');
 			if (!p) p = strrchr(buildDir, '\\');
-			if (p) {
+            if (p)
+            {
 				*p = 0;
-			} else {
+            }
+            else
+            {
 				strcpy(buildDir, ".");
 			}
 			remove(builder.hexfile);
-		} else {
+        }
+        else
+        {
 			strcpy(buildDir, filepath);
 		}
 
-		if (strstr(filepath, ".elf")) {
+        if (strstr(filepath, ".elf"))
+        {
 			builder.proc.flags = SF_REDIRECT_STDOUT;
-			if (!builder.ConvertELFtoHEX(filepath)) {
+            if (!builder.ConvertELFtoHEX(filepath))
+            {
 				builder.ConsoleOutput("Error generating HEX file");
 				ret = ERROR_SIZE;
 			}
-		} else {
+        }
+        else
+        {
 			builder.ConsoleOutput("Build Target: %s ", builder.board->name);
 			builder.ConsoleOutput("(MCU: %s)\r\n", builder.board->mcu);
 			
 			builder.sketchPath = filepath;
 			builder.buildDir = buildDir;
-			if (corefile) {
+            if (corefile)
+            {
 				builder.corefile = corefile;
-			} else if (IsDir("cores")) {
+            }
+            else if (IsDir("cores"))
+            {
 				builder.corefile = new char[128];
 				sprintf(builder.corefile, "cores/core_%s_%d.a", builder.board->id, builder.freq);
-			} else {
+            }
+            else
+            {
 				builder.corefile = 0;
 			}
 			builder.libfile = libfile;
@@ -179,39 +216,50 @@ int main(int argc, char* argv[])
 			ret = builder.BuildSketch();
 			builder.proc.iRetCode = ret;
 
-			if (builder.hexfile && !IsFileExist(builder.hexfile)) {
+            if (builder.hexfile && !IsFileExist(builder.hexfile))
+            {
 				cout << endl << "Error occurred during compiliation" << endl;
 				if (ret == 0) ret = -1;
 			}
 			cout << endl;
 		}
-		if (ret == SUCCESS && serial) {
+        if (ret == SUCCESS && serial)
+        {
 			char* eepfile = 0;
 			builder.ConsoleOutput("Starting upload for %s ", builder.board->name);
 			builder.ConsoleOutput("via %s...\r\n", serial);
 			builder.proc.flags = SF_REDIRECT_STDERR;
-			if (builder.target.eepBytes > 0) {
+            if (builder.target.eepBytes > 0)
+            {
 				eepfile = new char[strlen(builder.hexfile) + 5];
 				sprintf(eepfile, "%s.eep", builder.hexfile);
 			}
 			builder.proc.flags = SF_ALLOC | SF_REDIRECT_STDERR;
 			ret = builder.UploadToArduino(eepfile, serial, ispBaudrate, "bin/");
-			if (ret == 0) {
-				do {
-					while (ShellRead(&builder.proc, 3000) > 0) cout << builder.proc.buffer;
+            if (ret == 0)
+            {
+                do
+                {
+                    while (ShellRead(&builder.proc, 3000) > 0)
+                        cout << builder.proc.buffer;
 				} while (ShellWait(&builder.proc, 0) == 0);
 				ret = builder.proc.iRetCode;
 			}
 			ShellClean(&builder.proc);
-			if (eepfile) delete eepfile;
+            if (eepfile)
+                delete [] eepfile;
 		}
 
-		delete buildDir;
-		if (!corefile && builder.corefile) delete builder.corefile;
-	} else if (serial) {
+        delete [] buildDir;
+        if (!corefile && builder.corefile)
+            delete builder.corefile;
+    }
+    else if (serial)
+    {
 		ret = builder.UploadToArduino(0, serial, ispBaudrate, "bin/");
 	}
-	if (builder.hexfile) free(builder.hexfile);
+    if (builder.hexfile)
+        free(builder.hexfile);
 	free(appdir);
 
 #ifdef _DEBUG

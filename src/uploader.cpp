@@ -107,22 +107,31 @@ int CArduinoBuilder::UploadToArduino(const char* eepfile, const char* serial, in
 			p += sprintf(p, " -carduino -P\\\\.\\%s -b%d -D", serial, board->baudrate);
 		}
 #else
-		p += sprintf(p, "%savrdude -C /etc/avrdude.conf", avrpath);
-		if (!strcmp(serial, "usbasp")) {
+        p += sprintf(p, "%savrdude -C /etc/avrdude.conf", avrpath); //need to install avrdude
+        if (!strcmp(serial, "usbasp"))
+        {
 			p += sprintf(p, " -cusbasp -Pusb");
-		} else if (!strcmp(board->mcu, "atmega32u4")) {
+        }
+        else if (!strcmp(board->mcu, "atmega32u4"))
+        {
 			p += sprintf(p, " -cavr109 -P%s -b%d", uploadPort.c_str(), board->baudrate);
-		} else if (!strcmp(board->mcu, "atmega2560")) {
+        }
+        else if (!strcmp(board->mcu, "atmega2560"))
+        {
 			p += sprintf(p, " -cwiring -P%s -b%d", serial, board->baudrate);
-		} else {
+        }
+        else
+        {
 			p += sprintf(p, " -carduino -P%s -b%d", serial, board->baudrate);
 		}
 #endif
 		p += sprintf(p, " -V -p%s -Uflash:w:\"%s\":i", board->mcu, hexfile);
-		if (eepfile) {
+        if (eepfile)
+        {
 			p += sprintf(p, " -Ueeprom:w:\"%s\":i", eepfile);
 		}
-		if (ShellExec(&proc, cmd) != 0) {
+        if (ShellExec(&proc, cmd) != 0)
+        {
 			break;
 		}
 		//ResetLeonardo(serial.c_str());

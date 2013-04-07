@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstring>
 
+#include "processpil.h"
+
 #define SUCCESS 0
 #define ERROR_GENERIC -1
 #define ERROR_ANALYZE_SKETCH -2
@@ -35,7 +37,7 @@ typedef enum {
 	STATE_IDLE = 0,
 	STATE_BUILDING,
 	STATE_UPLOADING,
-	STATE_PROGRAMMING,
+    STATE_PROGRAMMING
 } STATE;
 
 class CArduinoBuilder {

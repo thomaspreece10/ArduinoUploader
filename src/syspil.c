@@ -49,14 +49,17 @@ int ReadDir(const char* pchDir, char* pchFileNameBuf)
 	static HANDLE hFind=NULL;
 	WIN32_FIND_DATA finddata;
 
-	if (!pchFileNameBuf) {
-		if (hFind) {
+    if (!pchFileNameBuf)
+    {
+        if (hFind)
+        {
 			FindClose(hFind);
 			hFind=NULL;
 		}
 		return 0;
 	}
-	if (pchDir) {
+    if (pchDir)
+    {
 		char *p;
 		int len;
 		if (hFind) FindClose(hFind);
@@ -65,7 +68,9 @@ int ReadDir(const char* pchDir, char* pchFileNameBuf)
 		snprintf(p, len + 5, "%s\\*.*", pchDir);
 		hFind=FindFirstFile(p,&finddata);
 		free(p);
-		if (hFind==INVALID_HANDLE_VALUE) {
+
+        if (hFind==INVALID_HANDLE_VALUE)
+        {
 			hFind=NULL;
 			return -1;
 		}
@@ -73,7 +78,8 @@ int ReadDir(const char* pchDir, char* pchFileNameBuf)
 		return 0;
 	}
 	if (!hFind) return -1;
-	if (!FindNextFile(hFind,&finddata)) {
+    if (!FindNextFile(hFind,&finddata))
+    {
 		FindClose(hFind);
 		hFind=NULL;
 		return -1;
@@ -83,21 +89,27 @@ int ReadDir(const char* pchDir, char* pchFileNameBuf)
 	static DIR *stDirIn=NULL;
 	struct dirent *stFiles;
 
-	if (!pchFileNameBuf) {
-		if (stDirIn) {
+    if (!pchFileNameBuf)
+    {
+        if (stDirIn)
+        {
 			closedir(stDirIn);
 			stDirIn=NULL;
 		}
 		return 0;
 	}
-	if (pchDir) {
+    if (pchDir)
+    {
 		if (!IsDir(pchDir)) return -1;
 		if (stDirIn) closedir(stDirIn);
 		stDirIn = opendir( pchDir);
 	}
-	if (!stDirIn) return -1;
+
+    if (!stDirIn)
+        return -1;
 	stFiles = readdir(stDirIn);
-	if (!stFiles) {
+    if (!stFiles)
+    {
 		closedir(stDirIn);
 		stDirIn=NULL;
 		return -1;
@@ -110,7 +122,10 @@ int ReadDir(const char* pchDir, char* pchFileNameBuf)
 int IsFileExist(const char* filename)
 {
 	struct stat stat_ret;
-	if (stat(filename, &stat_ret) != 0) return 0;
+    if (stat(filename, &stat_ret) != 0)
+    {
+        return 0;
+    }
 
 	return (stat_ret.st_mode & S_IFREG) != 0;
 }
