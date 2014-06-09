@@ -24,7 +24,7 @@
 #include <sys/stat.h>
 #include "processpil.h"
 
-#define __DEBUG;
+#define __DEBUG
 
 #define SF_BUFFER_SIZE 256
 

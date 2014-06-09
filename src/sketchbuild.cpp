@@ -811,6 +811,7 @@ int CArduinoBuilder::ReadProcessConsole()
 void CArduinoBuilder::ConsoleOutput(const char* text, const char* s)
 {
     fprintf(stderr, text, s);
+	fflush(stderr);
 }
 
 void CArduinoBuilder::ShowProgress(int percentage)

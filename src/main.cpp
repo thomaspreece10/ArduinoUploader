@@ -21,6 +21,9 @@ char* appdir;
 
 int main(int argc, char* argv[])
 {
+	setbuf(stdout, NULL);
+	setbuf(stderr, NULL);
+	
     char* filepath;
     const char* serial = 0;
 	char *p;
@@ -227,7 +230,7 @@ int main(int argc, char* argv[])
         if (ret == SUCCESS && serial)
         {
 			char* eepfile = 0;
-			builder.ConsoleOutput("Starting upload for %s ", builder.board->name);
+			builder.ConsoleOutput("\nStarting upload for %s ", builder.board->name);
 			builder.ConsoleOutput("via %s...\r\n", serial);
 			builder.proc.flags = SF_REDIRECT_STDERR;
             if (builder.target.eepBytes > 0)
@@ -244,6 +247,10 @@ int main(int argc, char* argv[])
                     while (ShellRead(&builder.proc, 3000) > 0)
                         cout << builder.proc.buffer;
 				} while (ShellWait(&builder.proc, 0) == 0);
+				
+				while (ShellRead(&builder.proc, 3000) > 0)
+					cout << builder.proc.buffer;
+
 				ret = builder.proc.iRetCode;
 			}
 			ShellClean(&builder.proc);
@@ -263,9 +270,5 @@ int main(int argc, char* argv[])
         free(builder.hexfile);
 	free(appdir);
 
-#ifdef _DEBUG
-	printf("Press ENTER to exit...");
-	getchar();
-#endif
     return ret;
 }
